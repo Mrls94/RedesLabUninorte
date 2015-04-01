@@ -49,6 +49,7 @@ public class CorreccionHamming extends javax.swing.JFrame {
         jTextField1 = new javax.swing.JTextField();
         jLabel1 = new javax.swing.JLabel();
         jButton1 = new javax.swing.JButton();
+        jButton2 = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -61,6 +62,13 @@ public class CorreccionHamming extends javax.swing.JFrame {
             }
         });
 
+        jButton2.setText("Verificar .ham");
+        jButton2.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                jButton2MouseClicked(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -70,6 +78,7 @@ public class CorreccionHamming extends javax.swing.JFrame {
                 .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, 242, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jButton2)
                     .addComponent(jButton1)
                     .addComponent(jLabel1))
                 .addContainerGap(43, Short.MAX_VALUE))
@@ -83,7 +92,9 @@ public class CorreccionHamming extends javax.swing.JFrame {
                     .addComponent(jLabel1))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jButton1)
-                .addContainerGap(240, Short.MAX_VALUE))
+                .addGap(71, 71, 71)
+                .addComponent(jButton2)
+                .addContainerGap(146, Short.MAX_VALUE))
         );
 
         pack();
@@ -120,6 +131,33 @@ public class CorreccionHamming extends javax.swing.JFrame {
         
     }//GEN-LAST:event_jButton1MouseClicked
 
+    private void jButton2MouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jButton2MouseClicked
+        // TODO add your handling code here:
+        ArrayList<String> BinaryString = new ArrayList<>();
+        file = Paths.get("PalabrasCodigo.ham");
+        
+        try
+        {
+            InputStream in = Files.newInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line;
+            line = reader.readLine();
+            while(line!=null)
+            {
+                BinaryString.add(line);
+                line = reader.readLine();
+            }
+            
+            ValidateCode(BinaryString);
+            
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+    }//GEN-LAST:event_jButton2MouseClicked
+
     /**
      * @param args the command line arguments
      */
@@ -155,6 +193,63 @@ public class CorreccionHamming extends javax.swing.JFrame {
         });
     }
     
+    public void ValidateCode(ArrayList<String> BinaryString)
+    {
+        String mensaje = "";
+        
+        for(int i=0; i<BinaryString.size(); i++)
+        {
+            char[] codes = BinaryString.get(i).toCharArray();
+            char[] code = new char[codes.length];
+            
+            for(int j=0; j<codes.length; j++)
+            {
+                code[j]=codes[codes.length - j-1];
+            }
+            
+            int c1 = ((int)code[0]-48)^((int)code[2]-48)^((int)code[4]-48)^((int)code[6]-48)^((int)code[8]-48)^((int)code[10]-48);
+            
+            System.out.println(c1+"= "+((int)code[0]-48)+" "+((int)code[2]-48)+" "+((int)code[4]-48)+" "+((int)code[6]-48)+" "+((int)code[8]-48)+" "+((int)code[10]-48));
+            
+            int c2 = ((int)code[1]-48)^((int)code[2]-48)^((int)code[5]-48)^((int)code[6]-48)^((int)code[9]-48)^((int)code[10]-48);
+            
+            int c3 = ((int)code[3]-48)^((int)code[4]-48)^((int)code[5]-48)^((int)code[6]-48)^((int)code[11]-48) ;
+            
+            int c4 = ((int)code[7]-48)^((int)code[8]-48)^((int)code[9]-48)^((int)code[10]-48)^((int)code[11]-48) ;
+            
+            System.out.println(c1+" "+c2+" "+c3+" "+c4);
+            
+            String ErbinString = c4+""+c3+""+c2+""+c1;
+            
+            int Error = Integer.parseInt(ErbinString,2);
+            
+            System.out.println("Error: "+Error);
+            
+            if(Error!=0)
+            {
+                if(code[Error-1]=='1')
+                {
+                    code[Error-1]='0';
+                }
+                else
+                {
+                    code[Error-1]='1';
+                }
+            }
+            
+            String binString = code[11]+""+code[10]+code[9]+""+code[8]+""+code[6]+""+code[5]+""+code[4]+""+code[2];
+            System.out.println(binString);
+            
+            int decAsci = Integer.parseInt(binString,2);
+            
+            mensaje = mensaje + Character.toString((char)decAsci);
+            
+            
+        }
+        
+        System.out.println(mensaje);
+    }
+    
     public void GenerateCode ()throws Exception
     {
         ArrayList<String> BinaryString = new ArrayList<>();
@@ -167,15 +262,24 @@ public class CorreccionHamming extends javax.swing.JFrame {
         {
             char[] chars=BinaryString.get(i).toCharArray();
             
-            char[] charsec = {'0','0','0','0','0','0','0','0','0'};
+            char[] charsec = {'0','0','0','0','0','0','0','0'};
+            
+            char[] charsec1 = new char[charsec.length];
             
             for(int j = 0; j<chars.length;j++)
             {
-                charsec[j] = chars[j];
+                charsec[j] = chars[chars.length-j-1];
                 //System.out.print(charsec[j]+"- "+j+"   ");
-                
+                System.out.print(charsec[j]);
             }
-            //System.out.println();
+            System.out.println();
+            
+            for(int j = 0; j<charsec.length; j++)
+            {
+                //charsec1[j]=charsec[charsec.length-j-1];
+                System.out.print(charsec[j]);
+            }
+            System.out.println();
             
             
             int c1 = ((int)charsec[0]-48)^((int)charsec[1]-48)^((int)charsec[3]-48)^((int)charsec[4]-48)^((int)charsec[6]-48);
@@ -185,10 +289,12 @@ public class CorreccionHamming extends javax.swing.JFrame {
             int c3 = ((int)charsec[1]-48)^((int)charsec[2]-48)^((int)charsec[3]-48)^((int)charsec[7]-48);
             
             int c4 = ((int)charsec[4]-48)^((int)charsec[5]-48)^((int)charsec[6]-48)^((int)charsec[7]-48);
+            //System.out.println(c4+"= "+((int)charsec[4]-48)+" "+((int)charsec[5]-48)+" "+((int)charsec[6]-48)+" "+((int)charsec[7]-48));
             
             System.out.println(c1 + " " + c2 + " " + c3 + " " + c4);
             
-            writer.println(charsec[7]+""+charsec[6]+""+charsec[5]+""+c4+""+charsec[4]+""+charsec[3]+""+charsec[2]+""+charsec[1]+""+c3+""+charsec[0]+""+c2+""+c1);
+            writer.println(charsec[7]+""+charsec[6]+""+charsec[5]+""+charsec[4]+""+c4+""+charsec[3]+""+charsec[2]+""+charsec[1]+""+c3+""+charsec[0]+""+c2+""+c1);
+            //writer.println(charsec[0]+""+charsec[1]+""+charsec[2]+""+charsec[3]+""+c4+""+charsec[4]+""+charsec[5]+""+charsec[6]+""+c3+""+charsec[7]+""+c2+""+c1);
             //writer.print(charsec[7]);
             //writer.print(charsec[6]);
             
@@ -202,6 +308,7 @@ public class CorreccionHamming extends javax.swing.JFrame {
     
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
+    private javax.swing.JButton jButton2;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JTextField jTextField1;
     // End of variables declaration//GEN-END:variables
