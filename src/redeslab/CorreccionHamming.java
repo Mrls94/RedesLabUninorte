@@ -7,10 +7,12 @@ package redeslab;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.PrintWriter;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import javax.swing.JOptionPane;
+import java.util.ArrayList;
+import java.util.Vector;
 
 /**
  *
@@ -24,7 +26,12 @@ public class CorreccionHamming extends javax.swing.JFrame {
     Path file;
     String inputPath;
     int DecimalConversion;
-    String BinaryString;
+    String inputString;
+    char[] CharVec;
+    Vector <Integer>intVec;
+    
+    int ParityLength;
+    
     
     public CorreccionHamming() {
         initComponents();
@@ -86,18 +93,25 @@ public class CorreccionHamming extends javax.swing.JFrame {
         // TODO add your handling code here:
         inputPath = jTextField1.getText();
         file = Paths.get(inputPath);
+        intVec = new Vector();
+        
         System.out.println("Entre");
         
         try
         {
             InputStream in = Files.newInputStream(file);
             BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String Line = reader.readLine();
+            inputString = reader.readLine();
+            CharVec = inputString.toCharArray();
             
-            DecimalConversion = Integer.parseInt(Line, 16);
-            BinaryString = Integer.toBinaryString(DecimalConversion);
-            System.out.println(DecimalConversion + " - "+ BinaryString);
-            JOptionPane.showMessageDialog(this,DecimalConversion + " - "+ BinaryString );
+            for(int i = 0; i<CharVec.length; i++)
+            {
+                intVec.add((int)CharVec[i]);
+            }
+            
+            //System.out.println(DecimalConversion + " - "+ BinaryString);
+            //JOptionPane.showMessageDialog(this,DecimalConversion + " - "+ BinaryString );
+            GenerateCode();
         }
         catch(Exception e)
         {
@@ -140,6 +154,52 @@ public class CorreccionHamming extends javax.swing.JFrame {
             }
         });
     }
+    
+    public void GenerateCode ()throws Exception
+    {
+        ArrayList<String> BinaryString = new ArrayList<>();
+        
+        for(int i=0; i<intVec.size(); i++)
+        BinaryString.add(Integer.toBinaryString(intVec.elementAt(i)));
+        PrintWriter writer = new PrintWriter("PalabrasCodigo.ham", "UTF-8");
+        
+        for(int i = 0; i<BinaryString.size(); i++)
+        {
+            char[] chars=BinaryString.get(i).toCharArray();
+            
+            char[] charsec = {'0','0','0','0','0','0','0','0','0'};
+            
+            for(int j = 0; j<chars.length;j++)
+            {
+                charsec[j] = chars[j];
+                //System.out.print(charsec[j]+"- "+j+"   ");
+                
+            }
+            //System.out.println();
+            
+            
+            int c1 = ((int)charsec[0]-48)^((int)charsec[1]-48)^((int)charsec[3]-48)^((int)charsec[4]-48)^((int)charsec[6]-48);
+            //System.out.println(c1+"= "+((int)charsec[0]-48)+" "+((int)charsec[1]-48)+" "+((int)charsec[3]-48)+" "+((int)charsec[4]-48)+" "+((int)charsec[6]-48));
+            int c2 = ((int)charsec[0]-48)^((int)charsec[2]-48)^((int)charsec[3]-48)^((int)charsec[5]-48)^((int)charsec[6]-48);
+            
+            int c3 = ((int)charsec[1]-48)^((int)charsec[2]-48)^((int)charsec[3]-48)^((int)charsec[7]-48);
+            
+            int c4 = ((int)charsec[4]-48)^((int)charsec[5]-48)^((int)charsec[6]-48)^((int)charsec[7]-48);
+            
+            System.out.println(c1 + " " + c2 + " " + c3 + " " + c4);
+            
+            writer.println(charsec[7]+""+charsec[6]+""+charsec[5]+""+c4+""+charsec[4]+""+charsec[3]+""+charsec[2]+""+charsec[1]+""+c3+""+charsec[0]+""+c2+""+c1);
+            //writer.print(charsec[7]);
+            //writer.print(charsec[6]);
+            
+            System.out.println("Escribi");
+            
+        }
+        
+        writer.close();
+        
+    }
+    
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton jButton1;
     private javax.swing.JLabel jLabel1;
