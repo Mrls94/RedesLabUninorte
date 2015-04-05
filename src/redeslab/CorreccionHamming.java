@@ -276,9 +276,8 @@ public class CorreccionHamming extends javax.swing.JFrame {
             System.out.println(binString);
             
             int decAsci = Integer.parseInt(binString,2);
-            
+            System.out.println(decAsci);
             mensaje = mensaje + Character.toString((char)decAsci);
-            
             
         }
         
