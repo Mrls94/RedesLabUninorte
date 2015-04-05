@@ -19,13 +19,16 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Vector;
+import javax.swing.JOptionPane;
 public class DeteccionPolinomial extends javax.swing.JFrame {
 
     /**
      * Creates new form DeteccionPolinomial
      */
     Path file;
+    Path file2;
     String inputPath;
+    String inputPath2;
     char[] CharVec;
     String generador;
     public DeteccionPolinomial() {
@@ -48,6 +51,7 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
         jButton3 = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         jTextField2 = new javax.swing.JTextField();
+        jTextField3 = new javax.swing.JTextField();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -79,11 +83,13 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
 
         jTextField2.setText("C:\\Users\\Carlo\\Documents\\GitHub\\RedesLabUninorte\\Entrada2.txt");
 
+        jTextField3.setText("C:\\Users\\Carlo\\Documents\\GitHub\\RedesLabUninorte\\Codewords.crc");
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+            .addGroup(layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
@@ -99,14 +105,20 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(89, 89, 89)
-                        .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addContainerGap()
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE))
+                            .addGroup(layout.createSequentialGroup()
+                                .addGap(89, 89, 89)
+                                .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 227, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                        .addGap(0, 0, Short.MAX_VALUE))
                     .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jLabel2)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jTextField2, javax.swing.GroupLayout.PREFERRED_SIZE, 218, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(jTextField3)))
+                .addContainerGap())
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -121,9 +133,11 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                         .addComponent(jLabel1)
                         .addComponent(jButton2))
                     .addComponent(jTextField1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(30, 30, 30)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 38, Short.MAX_VALUE)
+                .addComponent(jTextField3, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(22, 22, 22)
                 .addComponent(jButton3, javax.swing.GroupLayout.PREFERRED_SIZE, 87, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                .addGap(18, 18, 18)
                 .addComponent(jButton1)
                 .addGap(19, 19, 19))
         );
@@ -164,12 +178,15 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                                 }
                                 BinaryString.add(mensaje);
                                 line = reader.readLine();
+                                System.out.println(mensaje);
                     }else{
                          sw=true;
                          System.out.println("No es valido que haigan mas de 16 caracteres ASCII por linea");
                      }
                  }
                  if(sw==false){
+                     PrintWriter writer = new PrintWriter("Codewords.crc", "UTF-8");
+                     writer.write(generador);
                      for( String message : BinaryString ){
 
                      BigInteger divisor = new BigInteger(generador, 2);
@@ -184,14 +201,17 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                      BigInteger mode = dividend.mod(divisor);
                      codeword = codeword.add(mode);
                      String code="";
-                         System.out.println(codeword.toString(2));
+                         //System.out.println(codeword.toString(2));
                          for (int i = codeword.toString(2).length(); i<message.length()+generador.length()-1; i++) {
                              code= code+"0";
                          }
                       code = code+codeword.toString(2);
-                     System.out.println(code);
+                     
+                     writer.println();
+                     writer.write(code);
+                     //System.out.println(code);
                      }
-                   
+                   writer.close();
                  }
         }
         catch(Exception e)
@@ -201,13 +221,76 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
+        inputPath2 = jTextField3.getText();
+        file2 = Paths.get(inputPath2);
+        boolean correcto=true;
+        String generadorr="";
+        try{
+            InputStream in2 = Files.newInputStream(file2);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in2));
+            String line;
+            generadorr = reader.readLine();
+            line=reader.readLine();
+            while(line!=null)
+            {
+                //comprobacion
+                line = reader.readLine();
+            }
+            if(correcto){
+                 int j=0;
+                 InputStream in3 = Files.newInputStream(file2);
+                 BufferedReader reader2 = new BufferedReader(new InputStreamReader(in3));
+                 generadorr=reader2.readLine();
+                 line=reader2.readLine();
+                 PrintWriter writer = new PrintWriter("Codewords.txt", "UTF-8");
+                 BigInteger polgenerador = new BigInteger(generadorr, 2);
+                 double r = generadorr.length()-1;
+                 double v = Math.pow(2,r);
+                 String dividend2 = String.valueOf((int)v);
+                 BigInteger xr = new BigInteger(dividend2);
+                 String dateword;
+                 BigInteger num;
+                 BigInteger residuo;
+                 String temp="";
+                    while(line!=null)
+                    {
+                         
+                          line=line.substring(0,line.length()-generadorr.length()+1);
+                            for (int i = 0; i <generadorr.length()-1; i++) {
+                                line=line+"0";
+                            }
+                          
+                          num = new BigInteger(line,2);
+                          //residuo = num.mod(polgenerador);
+                          //num=num.subtract(residuo);
+                          num=num.divide(xr);
+                          dateword=num.toString(2);
+                          while(dateword.length()%8!=0){
+                              temp=temp+"0";
+                              temp=temp+dateword;
+                              dateword=temp;
+                          }
+                          for (int i = 0; i<dateword.length()/8; i++) {
+                              writer.write((char)Integer.parseInt(dateword.substring(j,j+8),2));
+                              //System.out.println((char)Integer.parseInt(dateword.substring(j,j+8),2));
+                              j=j+8;
+                        }
+                           writer.println();
+                          line = reader2.readLine();
+                    }
                   
-                        BigInteger divisor = new BigInteger("10", 2);
-                        System.out.println(divisor);
-    BigInteger dividend = new BigInteger("100", 2);
-    BigInteger result = dividend.divide(divisor);
-
-    System.out.println(result.toString(2));
+                 writer.close();
+                JOptionPane.showMessageDialog(null, "El mensaje es correcto, se ha generado el archivo de datos", "Correcto", JOptionPane.INFORMATION_MESSAGE);
+            }else{
+                JOptionPane.showMessageDialog(null, "El mensaje es incorrecto", "Error", JOptionPane.INFORMATION_MESSAGE);
+            }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+     
+        
     }//GEN-LAST:event_jButton3ActionPerformed
 
     /**
@@ -253,5 +336,6 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel2;
     private javax.swing.JTextField jTextField1;
     private javax.swing.JTextField jTextField2;
+    private javax.swing.JTextField jTextField3;
     // End of variables declaration//GEN-END:variables
 }

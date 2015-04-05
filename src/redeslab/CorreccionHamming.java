@@ -280,7 +280,6 @@ public class CorreccionHamming extends javax.swing.JFrame {
             mensaje = mensaje + Character.toString((char)decAsci);
             
         }
-        
         System.out.println(mensaje);
     }
     
