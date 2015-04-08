@@ -259,7 +259,6 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                             for (int i = 0; i <generadorr.length()-1; i++) {
                                 line=line+"0";
                             }
-                          
                           num = new BigInteger(line,2);
                           //residuo = num.mod(polgenerador);
                           //num=num.subtract(residuo);
