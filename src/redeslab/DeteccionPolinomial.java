@@ -36,12 +36,7 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
     }
     
     public String correcion(String generador, String word)
-    {
-        //generador="1011";
-        //word="1001000";
-        
-        
-        
+    {    
         int elev = word.length()- generador.length();
         String gen2=generador;
         int wordi = Integer.parseInt(word, 2);
@@ -228,9 +223,9 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                }
                
                line = reader.readLine();
+                System.out.println("escrin");
            }
            reader.close();
-           
            PrintWriter writer = new PrintWriter("Codewords.crc", "UTF-8");
            writer.println(generador);
            for( String message : BinaryString ){
@@ -240,7 +235,7 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
         }
         catch(Exception e)
         {
-            
+            e.printStackTrace();
         }
     }
 
@@ -290,7 +285,7 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
 
         jLabel2.setText("Escriba la direccion del archivo:");
 
-        jTextField2.setText("C:\\Users\\Carlo\\Documents\\GitHub\\RedesLabUninorte\\Entrada2.txt");
+        jTextField2.setText("C:\\Users\\Carlo\\Documents\\GitHub\\RedesLabUninorte\\Polinomio\\Emisor\\Codewords.txt");
 
         jTextField3.setText("C:\\Users\\Carlo\\Documents\\GitHub\\RedesLabUninorte\\Codewords.crc");
 
@@ -387,7 +382,7 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                  BufferedReader reader2 = new BufferedReader(new InputStreamReader(in3));
                  generadorr=reader2.readLine();
                  line=reader2.readLine();
-                 PrintWriter writer = new PrintWriter("SalidaPolinomial.txt", "UTF-8");
+                 PrintWriter writer = new PrintWriter("Codewords.txt", "UTF-8");
                  BigInteger polgenerador = new BigInteger(generadorr, 2);
                  double r = generadorr.length()-1;
                  double v = Math.pow(2,r);
@@ -401,34 +396,12 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                     {
                          
                           line=line.substring(0,line.length()-generadorr.length()+1);
-<<<<<<< HEAD
-                            for (int i = 0; i <generadorr.length()-1; i++) {
-                                line=line+"0";
-                            }
                           num = new BigInteger(line,2);
-=======
                           System.out.println(line);
-                            //for (int i = 0; i <generadorr.length()-1; i++) {
-                            //    line=line+"0";
-                            //}
-                          
-                          //num = new BigInteger(line,2);
->>>>>>> origin/master
-                          //residuo = num.mod(polgenerador);
-                          //num=num.subtract(residuo);
-                          //num=num.divide(xr);
-                          //dateword=num.toString(2);
-                          //while(dateword.length()%8!=0){
-                          //    temp=temp+"0";
-                           //   temp=temp+dateword;
-                           //   dateword=temp;
-                          //}
-                          
                           System.out.println(line.length());
-                          for (int i = 0; i<line.length(); i=i+8) {
+                          for (int i=0; i<line.length(); i=i+8) {
                               writer.write((char)Integer.parseInt(line.substring(i,i+8),2));
                               System.out.println((char)Integer.parseInt(line.substring(i,i+8),2));
-                              
                         }
                            writer.println();
                           line = reader2.readLine();
