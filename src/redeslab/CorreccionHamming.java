@@ -280,6 +280,16 @@ public class CorreccionHamming extends javax.swing.JFrame {
             mensaje = mensaje + Character.toString((char)decAsci);
             
         }
+        try
+        {
+            PrintWriter writer =  new PrintWriter("SalidaHamming.txt", "UTF-8");
+            writer.println(mensaje);
+            writer.close();
+        }
+        catch(Exception e)
+        {
+            
+        }
         System.out.println(mensaje);
     }
     
