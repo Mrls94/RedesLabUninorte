@@ -18,7 +18,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Vector;
 import javax.swing.JOptionPane;
 public class DeteccionPolinomial extends javax.swing.JFrame {
 
@@ -44,8 +43,12 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
         
         int elev = word.length()- generador.length();
         String gen2=generador;
-        int wordi = Integer.parseInt(word, 2);
-        int geni = Integer.parseInt(gen2, 2);
+        //System.out.println("word : " + word);
+        
+        BigInteger wordi = new BigInteger(word , 2);
+        BigInteger geni = new BigInteger(gen2, 2);
+        //int wordi = Integer.parseInt(word, 2);
+        //int geni = Integer.parseInt(gen2, 2);
         int res;
         
         for(int i=0; i<elev; i++)
@@ -64,17 +67,17 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                 {
                 gen2=gen2+"0";
                 }
-            wordi = Integer.parseInt(word, 2);
-            geni = Integer.parseInt(gen2, 2);
-            wordi = wordi^geni;
-            word = Integer.toBinaryString(wordi);
+            wordi = new BigInteger(word, 2);
+            geni = new BigInteger(gen2, 2);
+            wordi = wordi.xor(geni);
+            word = wordi.toString(2);//Integer.toBinaryString(wordi);
         }
         
         
         
        
         
-        String r = Integer.toBinaryString(wordi);
+        String r = wordi.toString(2);//Integer.toBinaryString(wordi);
         
         return r;
         
@@ -208,12 +211,14 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                    
                    String res = correcion(generador,Mensaje);
                    
-                   int IntRes = Integer.parseInt(res, 2);
-                   int IntMes = Integer.parseInt(Mensaje,2);
+                   BigInteger IntRes = new BigInteger(res,2);
+                   BigInteger IntMes = new BigInteger(Mensaje,2);
+                   //int IntRes = Integer.parseInt(res, 2);
+                   //int IntMes = Integer.parseInt(Mensaje,2);
                    
-                   int IntFinalMes = IntMes^IntRes;
+                   BigInteger IntFinalMes = IntMes.xor(IntRes);
                    
-                   Mensaje = Integer.toBinaryString(IntFinalMes);
+                   Mensaje = IntFinalMes.toString(2);
                    
                    if (Mensaje.length()<8*line.length()+generador.length()-1)
                    {
@@ -240,7 +245,7 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
         }
         catch(Exception e)
         {
-            
+         e.printStackTrace();
         }
     }
 
@@ -401,19 +406,19 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                     {
                          
                           line=line.substring(0,line.length()-generadorr.length()+1);
-<<<<<<< HEAD
-                            for (int i = 0; i <generadorr.length()-1; i++) {
-                                line=line+"0";
-                            }
+
+                            //for (int i = 0; i <generadorr.length()-1; i++) {
+                            //    line=line+"0";
+                            //}
                           num = new BigInteger(line,2);
-=======
+
                           System.out.println(line);
                             //for (int i = 0; i <generadorr.length()-1; i++) {
                             //    line=line+"0";
                             //}
                           
                           //num = new BigInteger(line,2);
->>>>>>> origin/master
+
                           //residuo = num.mod(polgenerador);
                           //num=num.subtract(residuo);
                           //num=num.divide(xr);
