@@ -34,6 +34,215 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
     public DeteccionPolinomial() {
         initComponents();
     }
+    
+    public String correcion(String generador, String word)
+    {
+        //generador="1011";
+        //word="1001000";
+        
+        
+        
+        int elev = word.length()- generador.length();
+        String gen2=generador;
+        int wordi = Integer.parseInt(word, 2);
+        int geni = Integer.parseInt(gen2, 2);
+        int res;
+        
+        for(int i=0; i<elev; i++)
+        {
+            gen2=gen2+"0";
+        }
+        //System.out.println(gen2);
+        //System.out.println(word);
+        
+        while(word.length()>generador.length())
+        {
+            elev = word.length()-generador.length();
+            gen2 = generador;
+            
+                for(int i=0; i<elev; i++)
+                {
+                gen2=gen2+"0";
+                }
+            wordi = Integer.parseInt(word, 2);
+            geni = Integer.parseInt(gen2, 2);
+            wordi = wordi^geni;
+            word = Integer.toBinaryString(wordi);
+        }
+        
+        
+        
+       
+        
+        String r = Integer.toBinaryString(wordi);
+        
+        return r;
+        
+        
+    }
+    
+    public void GenCodCar()
+    {
+        inputPath = jTextField2.getText();
+        file = Paths.get(inputPath);
+        ArrayList<String> BinaryString = new ArrayList<>();
+         try
+        {
+            InputStream in = Files.newInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line;
+            line = reader.readLine();
+            CharVec = line.toCharArray();
+            String mensaje="",charr="";
+            int binasci;
+            generador=jTextField1.getText();
+            boolean sw = false;
+           
+                 while(line!=null && sw==false)
+                 {
+                     if(line.length()<16){
+                     
+                            for (int j = 0; j < line.length(); j++) {
+                                    charr=line.substring(j, j+1);
+                                    for(int j2=Integer.toBinaryString(charr.charAt(0)).length();j2<8;j2++){
+                                        mensaje=mensaje+"0";
+                                    }
+                                    mensaje=mensaje+Integer.toBinaryString(charr.charAt(0));
+                                }
+                                BinaryString.add(mensaje);
+                                line = reader.readLine();
+                                System.out.println(mensaje);
+                    }else{
+                         sw=true;
+                         System.out.println("No es valido que haigan mas de 16 caracteres ASCII por linea");
+                     }
+                 }
+                 if(sw==false){
+                     PrintWriter writer = new PrintWriter("Codewords.crc", "UTF-8");
+                     writer.write(generador);
+                     for( String message : BinaryString ){
+
+                     BigInteger divisor = new BigInteger(generador, 2);
+                     double r = generador.length()-1;
+                     double v = Math.pow(2,r);
+                     String dividend2 = String.valueOf((int)v);
+                     BigInteger xr = new BigInteger(dividend2);
+                     BigInteger dateword = new BigInteger(message, 2);
+                     BigInteger dividend = dateword.multiply(xr);
+                   // BigInteger cociente = dividend.divide(divisor);
+                     BigInteger codeword = dividend;
+                     BigInteger mode = dividend.mod(divisor);
+                     codeword = codeword.add(mode);
+                     String code="";
+                         //System.out.println(codeword.toString(2));
+                         for (int i = codeword.toString(2).length(); i<message.length()+generador.length()-1; i++) {
+                             code= code+"0";
+                         }
+                      code = code+codeword.toString(2);
+                     
+                     writer.println();
+                     writer.write(code);
+                     //System.out.println(code);
+                     }
+                   writer.close();
+                 }
+        }
+        catch(Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    
+    public void genCode()
+    {
+        inputPath = jTextField2.getText();
+        file = Paths.get(inputPath);
+        ArrayList<String> BinaryString = new ArrayList<>();
+        
+         try
+        {
+            InputStream in = Files.newInputStream(file);
+            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+            String line;
+            line = reader.readLine();
+            generador=jTextField1.getText();
+            
+            char[] CharVec;
+            String Mensaje = "";
+            
+           while(line!=null)
+           {
+               if (line.length()>16)
+               {
+                   System.out.println("No es valido mas de 16 caracteres");
+                   break;
+               }
+               else
+               {
+                   CharVec = line.toCharArray();
+                   for(char a : CharVec)
+                   {
+                       int BinAscii = (int)a;
+                       String StringBin =Integer.toBinaryString(BinAscii);
+                       if (StringBin.length()<8)
+                       {
+                           while(StringBin.length()<8)
+                           {
+                               StringBin = "0"+StringBin;
+                           }
+                       }
+                       
+                       System.out.println(StringBin);
+                       
+                       Mensaje = Mensaje + StringBin;
+                   }
+                   
+                   System.out.println(Mensaje);
+                   
+                   for(int i=0;i<generador.length()-1;i++)
+                   {
+                       Mensaje = Mensaje+"0";
+                   }
+                   
+                   System.out.println(Mensaje);
+                   
+                   String res = correcion(generador,Mensaje);
+                   
+                   int IntRes = Integer.parseInt(res, 2);
+                   int IntMes = Integer.parseInt(Mensaje,2);
+                   
+                   int IntFinalMes = IntMes^IntRes;
+                   
+                   Mensaje = Integer.toBinaryString(IntFinalMes);
+                   
+                   if (Mensaje.length()<8*line.length()+generador.length()-1)
+                   {
+                       while(Mensaje.length()<8*line.length()+generador.length()-1)
+                           Mensaje = "0"+Mensaje;
+                   }
+                   
+                   System.out.println(Mensaje);
+                   BinaryString.add(Mensaje);
+                   
+                   
+               }
+               
+               line = reader.readLine();
+           }
+           reader.close();
+           
+           PrintWriter writer = new PrintWriter("Codewords.crc", "UTF-8");
+           writer.println(generador);
+           for( String message : BinaryString ){
+            writer.println(message);
+            }
+           writer.close();
+        }
+        catch(Exception e)
+        {
+            
+        }
+    }
 
     /**
      * This method is called from within the constructor to initialize the form.
@@ -150,74 +359,7 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
-        inputPath = jTextField2.getText();
-        file = Paths.get(inputPath);
-        ArrayList<String> BinaryString = new ArrayList<>();
-         try
-        {
-            InputStream in = Files.newInputStream(file);
-            BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-            String line;
-            line = reader.readLine();
-            CharVec = line.toCharArray();
-            String mensaje="",charr="";
-            int binasci;
-            generador=jTextField1.getText();
-            boolean sw = false;
-           
-                 while(line!=null && sw==false)
-                 {
-                     if(line.length()<16){
-                     
-                            for (int j = 0; j < line.length(); j++) {
-                                    charr=line.substring(j, j+1);
-                                    for(int j2=Integer.toBinaryString(charr.charAt(0)).length();j2<8;j2++){
-                                        mensaje=mensaje+"0";
-                                    }
-                                    mensaje=mensaje+Integer.toBinaryString(charr.charAt(0));
-                                }
-                                BinaryString.add(mensaje);
-                                line = reader.readLine();
-                                System.out.println(mensaje);
-                    }else{
-                         sw=true;
-                         System.out.println("No es valido que haigan mas de 16 caracteres ASCII por linea");
-                     }
-                 }
-                 if(sw==false){
-                     PrintWriter writer = new PrintWriter("Codewords.crc", "UTF-8");
-                     writer.write(generador);
-                     for( String message : BinaryString ){
-
-                     BigInteger divisor = new BigInteger(generador, 2);
-                     double r = generador.length()-1;
-                     double v = Math.pow(2,r);
-                     String dividend2 = String.valueOf((int)v);
-                     BigInteger xr = new BigInteger(dividend2);
-                     BigInteger dateword = new BigInteger(message, 2);
-                     BigInteger dividend = dateword.multiply(xr);
-                   // BigInteger cociente = dividend.divide(divisor);
-                     BigInteger codeword = dividend;
-                     BigInteger mode = dividend.mod(divisor);
-                     codeword = codeword.add(mode);
-                     String code="";
-                         //System.out.println(codeword.toString(2));
-                         for (int i = codeword.toString(2).length(); i<message.length()+generador.length()-1; i++) {
-                             code= code+"0";
-                         }
-                      code = code+codeword.toString(2);
-                     
-                     writer.println();
-                     writer.write(code);
-                     //System.out.println(code);
-                     }
-                   writer.close();
-                 }
-        }
-        catch(Exception e)
-        {
-            e.printStackTrace();
-        }
+        genCode();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed
@@ -233,7 +375,10 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
             line=reader.readLine();
             while(line!=null)
             {
-                //comprobacion
+                if (!correcion(generadorr,line).equals("0"))
+                {
+                    correcto = false;
+                }
                 line = reader.readLine();
             }
             if(correcto){
@@ -242,7 +387,7 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                  BufferedReader reader2 = new BufferedReader(new InputStreamReader(in3));
                  generadorr=reader2.readLine();
                  line=reader2.readLine();
-                 PrintWriter writer = new PrintWriter("Codewords.txt", "UTF-8");
+                 PrintWriter writer = new PrintWriter("SalidaPolinomial.txt", "UTF-8");
                  BigInteger polgenerador = new BigInteger(generadorr, 2);
                  double r = generadorr.length()-1;
                  double v = Math.pow(2,r);
@@ -256,23 +401,34 @@ public class DeteccionPolinomial extends javax.swing.JFrame {
                     {
                          
                           line=line.substring(0,line.length()-generadorr.length()+1);
+<<<<<<< HEAD
                             for (int i = 0; i <generadorr.length()-1; i++) {
                                 line=line+"0";
                             }
                           num = new BigInteger(line,2);
+=======
+                          System.out.println(line);
+                            //for (int i = 0; i <generadorr.length()-1; i++) {
+                            //    line=line+"0";
+                            //}
+                          
+                          //num = new BigInteger(line,2);
+>>>>>>> origin/master
                           //residuo = num.mod(polgenerador);
                           //num=num.subtract(residuo);
-                          num=num.divide(xr);
-                          dateword=num.toString(2);
-                          while(dateword.length()%8!=0){
-                              temp=temp+"0";
-                              temp=temp+dateword;
-                              dateword=temp;
-                          }
-                          for (int i = 0; i<dateword.length()/8; i++) {
-                              writer.write((char)Integer.parseInt(dateword.substring(j,j+8),2));
-                              //System.out.println((char)Integer.parseInt(dateword.substring(j,j+8),2));
-                              j=j+8;
+                          //num=num.divide(xr);
+                          //dateword=num.toString(2);
+                          //while(dateword.length()%8!=0){
+                          //    temp=temp+"0";
+                           //   temp=temp+dateword;
+                           //   dateword=temp;
+                          //}
+                          
+                          System.out.println(line.length());
+                          for (int i = 0; i<line.length(); i=i+8) {
+                              writer.write((char)Integer.parseInt(line.substring(i,i+8),2));
+                              System.out.println((char)Integer.parseInt(line.substring(i,i+8),2));
+                              
                         }
                            writer.println();
                           line = reader2.readLine();
